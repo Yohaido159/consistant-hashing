@@ -1,0 +1,29 @@
+name: API workflow
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test Coverage
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14' # Set the Node.js version you want to use
+    - name: Install dependencies
+      run: npm install -D
+      
+    - name: Run tests
+      run: npm run coveralls
+
+    - name: Upload coverage reports to Codecov
+      run: |
+        curl -Os https://uploader.codecov.io/latest/linux/codecov
+        chmod +x codecov
+        ./codecov -t ${CODECOV_TOKEN}
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
